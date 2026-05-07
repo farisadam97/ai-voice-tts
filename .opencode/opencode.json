@@ -1,0 +1,100 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "glm-4.7",
+  "provider": {
+    "openai-compatible": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "GLM",
+      "options": {
+        "baseURL": "https://api.example.com/v1"
+      },
+      "models": {
+        "glm-4.7": {
+          "name": "GLM 4.7"
+        }
+      }
+    }
+  },
+  "instructions": ["AGENTS.md", "README.md"],
+  "agent": {
+    "code-reviewer": {
+      "description": "Reviews code for quality and security",
+      "model": "glm-4.7",
+      "prompt": "You are a senior code reviewer. Focus on: code quality, security, performance, and maintainability. Flag any issues with audio processing, API calls, or resource management.",
+      "tools": {
+        "write": false,
+        "edit": false
+      }
+    },
+    "python-reviewer": {
+      "description": "Python-specific code review",
+      "model": "glm-4.7",
+      "prompt": "You are a Python specialist. Enforce: PEP 8, type hints, proper error handling, and pytest best practices. Check for async/await correctness if dealing with audio streaming.",
+      "tools": {
+        "write": false,
+        "edit": false
+      }
+    },
+    "security-reviewer": {
+      "description": "Security vulnerability analysis",
+      "model": "glm-4.7",
+      "prompt": "You are a security auditor. Scan for: hardcoded secrets, injection risks, unsafe file operations, and API key exposure. This project uses local APIs (LM Studio) - ensure no external data leaks.",
+      "tools": {
+        "write": false,
+        "edit": false
+      }
+    }
+  },
+  "default_agent": "build",
+  "command": {
+    "plan": {
+      "template": "Create a detailed implementation plan for: {{input}}. Consider Qwen3-TTS integration, LM Studio API, Python best practices, and audio processing constraints.",
+      "description": "Create implementation plan",
+      "agent": "build"
+    },
+    "tdd": {
+      "template": "Follow TDD workflow: 1) Write failing test for {{input}}, 2) Implement minimal code, 3) Refactor. Use pytest and aim for 80%+ coverage.",
+      "description": "Start TDD workflow",
+      "agent": "build"
+    },
+    "code-review": {
+      "template": "Review the code for quality, security, and performance. Focus on: Python idioms, error handling, and audio processing safety.",
+      "description": "Review code",
+      "agent": "code-reviewer"
+    },
+    "security-scan": {
+      "template": "Scan for security issues: hardcoded secrets, injection risks, unsafe file operations, API key exposure. Check that local APIs don't leak data externally.",
+      "description": "Run security audit",
+      "agent": "security-reviewer"
+    },
+    "verify": {
+      "template": "Run verification: check types with mypy, run pytest, check formatting with black, verify imports with isort.",
+      "description": "Run verification loop",
+      "agent": "build"
+    }
+  },
+  "permission": {
+    "edit": "ask",
+    "bash": "ask"
+  },
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "reserved": 10000
+  },
+  "watcher": {
+    "ignore": [
+      "voice_samples/**",
+      "output/**",
+      "__pycache__/**",
+      "*.pyc",
+      ".git/**",
+      "node_modules/**"
+    ]
+  },
+  "tools": {
+    "write": true,
+    "edit": true,
+    "bash": true
+  }
+}

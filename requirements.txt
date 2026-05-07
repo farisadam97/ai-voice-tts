@@ -1,0 +1,7 @@
+chatterbox-tts
+openai
+soundfile
+sounddevice
+flask
+demucs
+torch
